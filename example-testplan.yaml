@@ -1,0 +1,4 @@
+name: Example
+description: An example testplan to show what fields are available
+selectors:
+        - className: com.slickqa.junit.testrunner.MainTest

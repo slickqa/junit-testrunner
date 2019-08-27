@@ -3,12 +3,25 @@
  */
 package com.slickqa.junit.testrunner;
 
+import com.slickqa.junit.testrunner.testplan.TestplanFile;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+
+import java.io.File;
+import java.io.IOException;
+
 public class Main {
     public String getGreeting() {
         return "Hello world.";
     }
 
     public static void main(String[] args) {
-        System.out.println(new Main().getGreeting());
+        try {
+            TestplanFile testplan = TestplanFile.readFrom(new File(args[0]));
+            System.out.println("We read in testplan " + args[0] + ", there are " + testplan.getSelectors().size() + " selectors and " + testplan.getFilters().size() + " filters.");
+            LauncherDiscoveryRequest request = testplan.toLauncherDiscoveryRequest();
+            System.out.println("Built a launcher request.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,9 +1,13 @@
 package com.slickqa.junit.testrunner.testplan;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +17,13 @@ public class TestplanFile {
     private String description;
     private List<Map<Selector, String>> selectors;
     private List<Map<Filter, String>> filters;
+
+    public TestplanFile() {
+        name = "";
+        description = "";
+        selectors = new ArrayList<>();
+        filters = new ArrayList<>();
+    }
 
     public String getName() {
         return name;
@@ -59,6 +70,16 @@ public class TestplanFile {
                 filters.add(filter.getKey().filter(filter.getValue()));
             }
         }
-        return LauncherDiscoveryRequestBuilder.request().selectors(selectors).filters((org.junit.platform.engine.Filter[])filters.toArray()).build();
+        return LauncherDiscoveryRequestBuilder.request().selectors(selectors).filters(filters.toArray(new org.junit.platform.engine.Filter[0])).build();
+    }
+
+    public static TestplanFile readFrom(File file) throws IOException {
+        ObjectMapper mapper;
+        if(file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")) {
+            mapper = new ObjectMapper(new YAMLFactory());
+        } else {
+            mapper = new ObjectMapper();
+        }
+        return mapper.readValue(file, TestplanFile.class);
     }
 }
