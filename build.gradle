@@ -1,10 +1,20 @@
 plugins {
     // Apply the java plugin to add support for Java
-    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'io.codearte.nexus-staging' version '0.21.0'
+    id 'de.marcphilipp.nexus-publish' version '0.2.0'
 
-    // Apply the application plugin to add support for building a CLI application
-    id 'application'
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
 }
+
+group 'com.slickqa'
+version '1.0.0-' + projectBuildNumber
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+sourceCompatibility = 1.8
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -26,14 +36,42 @@ dependencies {
     compile 'org.junit.platform:junit-platform-launcher:1.5.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.9.1'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
+    compile 'info.picocli:picocli:4.0.3'
 }
 
-application {
-    // Define the main class for the application
-    mainClassName = 'com.slickqa.junit.testrunner.Main'
-}
 
 test {
     // Use junit platform for unit tests
-    useJUnitPlatform()
+    useJUnitPlatform {
+        filter {
+            excludeTestsMatching 'com.slickqa.junit.testrunner.example.*'
+        }
+    }
 }
+
+import org.apache.tools.ant.filters.ReplaceTokens
+processResources {
+    with copySpec {
+        from 'src/main/resources'
+
+        filter ReplaceTokens, tokens: [
+            version: version,
+        ]
+    }
+}
+
+// Shadowing Test Sources and Dependencies
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+task testJar(type: ShadowJar) {
+    appendix = 'test'
+    configurations = [project.configurations.compile, project.configurations.testRuntimeClasspath]
+    from sourceSets.main.output
+    from sourceSets.test.output
+    //configurations = [project.configurations.testRuntime]
+    mergeServiceFiles()
+    manifest {
+        attributes 'Main-Class': 'com.slickqa.junit.testrunner.TestRunner'
+    }
+}
+

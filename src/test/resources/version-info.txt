@@ -1,0 +1,3 @@
+@|yellow junit-testrunner demo |@
+JVM: ${java.version} (${java.vendor} ${java.vm.name} ${java.vm.version})
+OS: ${os.name} ${os.version} ${os.arch}

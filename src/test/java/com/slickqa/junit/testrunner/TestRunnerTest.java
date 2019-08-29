@@ -6,9 +6,9 @@ package com.slickqa.junit.testrunner;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MainTest {
+class TestRunnerTest {
     @Test void appHasAGreeting() {
-        Main classUnderTest = new Main();
+        TestRunner classUnderTest = new TestRunner();
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
     }
 }
