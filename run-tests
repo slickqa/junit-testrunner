@@ -1,0 +1,3 @@
+#!/bin/bash
+
+java -jar build/libs/junit-testrunner-test-1.0.0-SNAPSHOT.jar "$@"

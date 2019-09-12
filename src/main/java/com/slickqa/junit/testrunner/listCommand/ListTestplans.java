@@ -76,9 +76,9 @@ public class ListTestplans implements Callable<Integer> {
         }
         String[] columns;
         if(count) {
-            columns = new String[] {"Name", "Test Count", "Location", "Description"};
+            columns = new String[] {"Name", "Test Count", "Location", "Testplan Description"};
         } else {
-            columns = new String[] {"Name", "Location", "Description"};
+            columns = new String[] {"Name", "Location", "Testplan Description"};
         }
         String[][] data = new String[testplans.size()][];
         for(int i = 0; i < testplans.size(); i++) {
