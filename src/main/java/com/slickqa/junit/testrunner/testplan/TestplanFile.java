@@ -2,6 +2,7 @@ package com.slickqa.junit.testrunner.testplan;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.slickqa.junit.testrunner.testinfo.Configuration;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -9,6 +10,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,9 +59,10 @@ public class TestplanFile {
         this.filters = filters;
     }
 
-    public LauncherDiscoveryRequest toLauncherDiscoveryRequest() {
+    public LauncherDiscoveryRequest toLauncherDiscoveryRequest(Configuration... entries) {
         List<org.junit.platform.engine.Filter> filters = new ArrayList<>();
         List<DiscoverySelector> selectors = new ArrayList<>();
+        Map<String, String> configurationParameters = new HashMap<>();
         for(Map<Selector, String> selectorMap : this.getSelectors()) {
             for(Map.Entry<Selector, String> selector : selectorMap.entrySet()) {
                 selectors.add(selector.getKey().select(selector.getValue()));
@@ -70,7 +73,14 @@ public class TestplanFile {
                 filters.add(filter.getKey().filter(filter.getValue()));
             }
         }
-        return LauncherDiscoveryRequestBuilder.request().selectors(selectors).filters(filters.toArray(new org.junit.platform.engine.Filter[0])).build();
+        for(Configuration config : entries) {
+            configurationParameters.put(config.getKey(), config.getValue());
+        }
+        return LauncherDiscoveryRequestBuilder.request()
+                .selectors(selectors)
+                .filters(filters.toArray(new org.junit.platform.engine.Filter[0]))
+                .configurationParameters(configurationParameters)
+                .build();
     }
 
     public static TestplanFile readFrom(File file) throws IOException {

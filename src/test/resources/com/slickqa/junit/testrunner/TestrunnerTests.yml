@@ -1,0 +1,6 @@
+name: SlickQA Junit Testrunner Tests
+description: Tests that run during the build of SlickQA Junit Testrunner
+selectors:
+  - packageName: com.slickqa.junit.testrunner
+filters:
+  - excludePackageName: com.slickqa.junit.testrunner.example

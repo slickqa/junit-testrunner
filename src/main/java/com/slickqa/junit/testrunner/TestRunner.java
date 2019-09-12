@@ -3,6 +3,7 @@
  */
 package com.slickqa.junit.testrunner;
 
+import com.slickqa.junit.testrunner.listCommand.ListCommand;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -21,12 +22,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @Command(mixinStandardHelpOptions = true, versionProvider = TestRunnerVersionProvider.class,
-         subcommands = {HelpCommand.class})
+         subcommands = {
+            HelpCommand.class,
+            ListCommand.class,
+         })
 public class TestRunner {
-
-    public String getGreeting() {
-        return "Hello world.";
-    }
 
     /*
     commands:

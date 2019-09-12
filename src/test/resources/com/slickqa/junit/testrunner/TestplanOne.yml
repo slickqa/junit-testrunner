@@ -1,0 +1,4 @@
+name: Testplan One
+description: a few tests to show off a testplan
+selectors:
+  - packageName: com.slickqa.junit.testrunner.example.one

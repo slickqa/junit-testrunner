@@ -27,17 +27,17 @@ dependencies {
     implementation 'com.google.guava:guava:28.0-jre'
 
     // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
     testImplementation 'com.google.truth:truth:1.0'
 
-    // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
-
+    compile 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+    compile 'org.junit.jupiter:junit-jupiter-api:5.4.2'
     compile 'org.junit.platform:junit-platform-engine:1.5.1'
     compile 'org.junit.platform:junit-platform-launcher:1.5.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.9.1'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
     compile 'info.picocli:picocli:4.0.3'
+    compile 'io.github.classgraph:classgraph:4.8.47'
+    compile 'com.jakewharton.fliptables:fliptables:1.0.2'
 }
 
 
