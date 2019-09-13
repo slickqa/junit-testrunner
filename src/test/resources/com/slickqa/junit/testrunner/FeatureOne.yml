@@ -1,0 +1,4 @@
+name: Feature One
+description: All the tests for feature one
+selectors:
+  - className: com.slickqa.junit.testrunner.example.FirstFeatureTests

@@ -28,6 +28,7 @@ dependencies {
 
     // Use JUnit Jupiter API for testing.
     testImplementation 'com.google.truth:truth:1.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-params:5.4.2'
 
     compile 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
     compile 'org.junit.jupiter:junit-jupiter-api:5.4.2'
@@ -35,6 +36,7 @@ dependencies {
     compile 'org.junit.platform:junit-platform-launcher:1.5.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.9.1'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
+    compile 'com.slickqa:slickqa-junit-jupiter:1.0.0-20'
     compile 'info.picocli:picocli:4.0.3'
     compile 'io.github.classgraph:classgraph:4.8.47'
     compile 'de.vandermeer:asciitable:0.3.2'

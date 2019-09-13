@@ -1,0 +1,4 @@
+name: All Example Tests
+description: All the tests contained in the example package
+selectors:
+  - packageName: com.slickqa.junit.testrunner.example

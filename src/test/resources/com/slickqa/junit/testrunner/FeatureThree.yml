@@ -1,0 +1,4 @@
+name: Third Feature
+description: All the tests for the third feature
+selectors:
+  - className: com.slickqa.junit.testrunner.example.ThirdFeatureTests

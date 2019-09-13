@@ -1,0 +1,4 @@
+name: Feature Two
+description: All the tests for feature two
+selectors:
+  - packageName: com.slickqa.junit.testrunner.example.secondFeature
