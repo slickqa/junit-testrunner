@@ -37,7 +37,8 @@ dependencies {
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
     compile 'info.picocli:picocli:4.0.3'
     compile 'io.github.classgraph:classgraph:4.8.47'
-    compile 'com.jakewharton.fliptables:fliptables:1.0.2'
+    compile 'de.vandermeer:asciitable:0.3.2'
+    compile 'org.jline:jline:3.12.1'
 }
 
 

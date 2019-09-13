@@ -5,7 +5,8 @@ import picocli.CommandLine;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name="list", subcommands = {
-        ListTestplans.class
+        ListTestplans.class,
+        ListTestcases.class
 })
 public class ListCommand implements Callable<Integer> {
 

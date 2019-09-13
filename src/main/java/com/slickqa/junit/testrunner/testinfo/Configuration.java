@@ -13,6 +13,39 @@ public class Configuration {
         return new Configuration(name, value);
     }
 
+    public static boolean OptionIsSet(Configuration[] options, String name, String value) {
+        if(name == null) {
+            return false;
+        }
+
+        for(Configuration option : options) {
+            if(name.equals(option.getKey())) {
+                if(value == null) {
+                    if(option.getValue() == null) {
+                        return true;
+                    }
+                } else if(value.equalsIgnoreCase(option.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static String GetOptionIfSet(Configuration[] options, String name) {
+        if(name == null) {
+            return null;
+        }
+
+        for(Configuration option : options) {
+            if(name.equals(option.getKey())) {
+                return option.getValue();
+            }
+        }
+
+        return null;
+    }
+
     public String getKey() {
         return key;
     }

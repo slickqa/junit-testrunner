@@ -31,4 +31,3 @@ public class TestInformationCollectingExtension implements BeforeTestExecutionCa
     }
 }
 
-class InterruptedTestExecutionException extends Exception {}

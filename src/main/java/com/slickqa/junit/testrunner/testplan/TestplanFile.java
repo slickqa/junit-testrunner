@@ -3,9 +3,13 @@ package com.slickqa.junit.testrunner.testplan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.slickqa.junit.testrunner.testinfo.Configuration;
+import com.slickqa.junit.testrunner.testinfo.TestInformationCollectingExtension;
+import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
 import org.junit.platform.engine.DiscoverySelector;
+import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,5 +95,16 @@ public class TestplanFile {
             mapper = new ObjectMapper();
         }
         return mapper.readValue(file, TestplanFile.class);
+    }
+
+    public List<TestcaseInfo> getTests() {
+        String sessionId = TestInformationCollectingExtension.createSession();
+        LauncherDiscoveryRequest request = toLauncherDiscoveryRequest(
+                Configuration.Value(TestInformationCollectingExtension.SESSION_ID_CONFIGURATION_NAME, sessionId),
+                Configuration.Value("junit.jupiter.extensions.autodetection.enabled", "true")
+        );
+        Launcher launcher = LauncherFactory.create();
+        launcher.execute(request);
+        return TestInformationCollectingExtension.getTestsFromSession(sessionId);
     }
 }

@@ -2,16 +2,13 @@ package com.slickqa.junit.testrunner.listCommand;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.jakewharton.fliptables.FlipTable;
 import com.slickqa.junit.testrunner.testinfo.Configuration;
-import com.slickqa.junit.testrunner.testinfo.TestInformationCollectingExtension;
+import com.slickqa.junit.testrunner.testinfo.OutputFormat;
+import com.slickqa.junit.testrunner.testinfo.TestplanInfo;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.Resource;
 import io.github.classgraph.ResourceList;
-import org.junit.platform.launcher.Launcher;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
-import org.junit.platform.launcher.core.LauncherFactory;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
@@ -19,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
-@CommandLine.Command(name="testplans")
+@CommandLine.Command(name="testplans", aliases = "tp")
 public class ListTestplans implements Callable<Integer> {
 
     // needed for automatic help
@@ -32,6 +29,9 @@ public class ListTestplans implements Callable<Integer> {
     @CommandLine.Option(names = {"-c", "--count"}, description = "Print a count of the number of testcases in that testplan.")
     boolean count;
 
+    @CommandLine.Option(names={"-f", "--format"}, description = "Output in this format (default is table).")
+    OutputFormat format = OutputFormat.table;
+
     @Override
     public Integer call() throws Exception {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -41,28 +41,11 @@ public class ListTestplans implements Callable<Integer> {
             try {
                 TestplanFile tp = mapper.readValue(potentialTestplan.getURL(), TestplanFile.class);
                 if (tp != null) {
-                    if (tp.getName() == null || "".equals(tp.getName())) {
-                        String name = potentialTestplan.getPathRelativeToClasspathElement();
-                        int lastSlashIndex = name.lastIndexOf('/');
-                        if (lastSlashIndex > 0) {
-                            name = name.substring(lastSlashIndex + 1);
-                        }
-                        int lastPeriodInName = name.lastIndexOf('.');
-                        if (lastPeriodInName > 0) {
-                            name = name.substring(0, lastPeriodInName);
-                        }
-                        tp.setName(name);
-                    }
                     TestplanInfo info = new TestplanInfo();
                     info.setTestplan(tp);
                     info.setPath(potentialTestplan.getPathRelativeToClasspathElement());
                     if(count) {
-                        String sessionId = TestInformationCollectingExtension.createSession();
-                        LauncherDiscoveryRequest request = tp.toLauncherDiscoveryRequest(Configuration.Value(TestInformationCollectingExtension.SESSION_ID_CONFIGURATION_NAME, sessionId),
-                                Configuration.Value("junit.jupiter.extensions.autodetection.enabled", "true"));
-                        Launcher launcher = LauncherFactory.create();
-                        launcher.execute(request);
-                        info.setTestCount(TestInformationCollectingExtension.getTestsFromSession(sessionId).size());
+                        info.setTestCount(tp.getTests().size());
                     }
                     testplans.add(info);
                 }
@@ -74,57 +57,15 @@ public class ListTestplans implements Callable<Integer> {
                 potentialTestplan.close();
             }
         }
-        String[] columns;
+
+        Configuration[] options = new Configuration[0];
         if(count) {
-            columns = new String[] {"Name", "Test Count", "Location", "Testplan Description"};
-        } else {
-            columns = new String[] {"Name", "Location", "Testplan Description"};
+            options = new Configuration[] {Configuration.Value(TestplanInfo.INCLUDE_COUNT_OPTION, "true")};
         }
-        String[][] data = new String[testplans.size()][];
-        for(int i = 0; i < testplans.size(); i++) {
-            data[i] = new String[columns.length];
-            TestplanInfo info = testplans.get(i);
-            int j = 0;
-            data[i][j++] = info.getTestplan().getName();
-            if (count) {
-                data[i][j++] = Integer.toString(info.getTestCount());
-            }
-            data[i][j++] = info.getPath();
-            data[i][j++] = info.getTestplan().getDescription();
-        }
-        System.out.println(FlipTable.of(columns, data));
+        // output
+        System.out.println(format.generateOutput(testplans, options));
+
         return 0;
     }
 }
 
-class TestplanInfo {
-    TestplanFile testplan;
-    String path;
-    int testCount;
-
-
-
-    public TestplanFile getTestplan() {
-        return testplan;
-    }
-
-    public void setTestplan(TestplanFile testplan) {
-        this.testplan = testplan;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public int getTestCount() {
-        return testCount;
-    }
-
-    public void setTestCount(int testCount) {
-        this.testCount = testCount;
-    }
-}
