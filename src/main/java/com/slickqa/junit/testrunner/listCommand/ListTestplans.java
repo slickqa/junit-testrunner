@@ -29,7 +29,7 @@ public class ListTestplans implements Callable<Integer> {
     @CommandLine.Option(names = {"-c", "--count"}, description = "Print a count of the number of testcases in that testplan.")
     boolean count;
 
-    @CommandLine.Option(names={"-f", "--format"}, description = "Output in this format (default is table).")
+    @CommandLine.Option(names={"-f", "--format"}, description = "Output format.  Default is table. You can choose one of table, json, or yaml.")
     OutputFormat format = OutputFormat.table;
 
     @Override
