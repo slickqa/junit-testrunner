@@ -1,9 +1,18 @@
-package com.slickqa.junit.testrunner.testinfo;
+package com.slickqa.junit.testrunner.testplan;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.slickqa.junit.testrunner.testplan.TestplanFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.slickqa.junit.testrunner.Configuration;
+import com.slickqa.junit.testrunner.output.EndUserData;
 import de.vandermeer.asciitable.AsciiTable;
-import de.vandermeer.asciithemes.TA_GridThemes;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.Resource;
+import io.github.classgraph.ResourceList;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class TestplanInfo implements EndUserData {
     public static final String INCLUDE_COUNT_OPTION = "INCLUDE_COUNT";
@@ -11,6 +20,31 @@ public class TestplanInfo implements EndUserData {
     TestplanFile testplan;
     String path;
     int testCount;
+
+    public static List<TestplanInfo> findAvailableTestplans(boolean count) {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        ResourceList potentialTestplansList = (new ClassGraph()).scan().getResourcesMatchingPattern(Pattern.compile("^.*\\.(yml|yaml)"));
+        List<TestplanInfo> testplans = new ArrayList<>();
+        for(Resource potentialTestplan : potentialTestplansList) {
+            try {
+                TestplanFile tp = mapper.readValue(potentialTestplan.getURL(), TestplanFile.class);
+                if (tp != null) {
+                    TestplanInfo info = new TestplanInfo();
+                    info.setTestplan(tp);
+                    info.setPath(potentialTestplan.getPathRelativeToClasspathElement());
+                    if(count) {
+                        info.setTestCount(tp.getTests().size());
+                    }
+                    testplans.add(info);
+                }
+            } catch (Exception e) {
+                // do nothing
+            } finally {
+                potentialTestplan.close();
+            }
+        }
+        return testplans;
+    }
 
     public String getName() {
         String name = testplan.getName();

@@ -1,4 +1,4 @@
-package com.slickqa.junit.testrunner.listCommand;
+package com.slickqa.junit.testrunner.commands;
 
 import picocli.CommandLine;
 

@@ -1,12 +1,13 @@
-package com.slickqa.junit.testrunner.testinfo;
+package com.slickqa.junit.testrunner.run;
 
+import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.*;
 
 public class TestInformationCollectingExtension implements BeforeTestExecutionCallback {
-    public static final String SESSION_ID_CONFIGURATION_NAME = "com.slickqa.junit.testrunner.testinfo.TestInformationCollectingExtension";
+    public static final String SESSION_ID_CONFIGURATION_NAME = "com.slickqa.junit.testrunner.run.TestInformationCollectingExtension";
 
     private static Map<String, List<TestcaseInfo>> sessions = new HashMap<>();
 

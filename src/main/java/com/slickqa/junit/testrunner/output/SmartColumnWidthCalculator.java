@@ -1,4 +1,4 @@
-package com.slickqa.junit.testrunner.testinfo;
+package com.slickqa.junit.testrunner.output;
 
 import de.vandermeer.asciitable.AT_Cell;
 import de.vandermeer.asciitable.AT_ColumnWidthCalculator;

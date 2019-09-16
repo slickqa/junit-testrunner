@@ -1,15 +1,93 @@
 package com.slickqa.junit.testrunner.testinfo;
 
+import com.slickqa.junit.testrunner.Configuration;
+import com.slickqa.junit.testrunner.output.EndUserData;
+import com.slickqa.junit.testrunner.testplan.Filter;
+import com.slickqa.junit.testrunner.testplan.Selector;
+import com.slickqa.junit.testrunner.testplan.TestplanFile;
+import com.slickqa.junit.testrunner.testplan.TestplanInfo;
 import de.vandermeer.asciitable.AsciiTable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestcaseInfo implements EndUserData {
     public static final String WITH_ID="WITH_ID";
     private String id;
     private String name;
     private Method method;
+
+    public static List<TestcaseInfo> findTestcases(String[] locators) {
+        List<Map<Selector, String>> selectors = new ArrayList<>();
+        List<Map<Filter, String>> filters = new ArrayList<>();
+        List<TestplanInfo> availableTestplans = TestplanInfo.findAvailableTestplans(false);
+        TestplanFile testplan = new TestplanFile();
+
+        for(String locator : locators) {
+            if(locator.contains(":")) {
+                int indexOfColon = locator.indexOf(':');
+                if(locator.startsWith("exclude") || locator.startsWith("include")) {
+                    String filterName = locator.substring(0, indexOfColon);
+                    String filterValue = locator.substring(indexOfColon + 1);
+                    Map<Filter, String> filter = new HashMap<>();
+                    try {
+                        filter.put(Filter.valueOf(filterName), filterValue);
+                        filters.add(filter);
+                    } catch (Exception e) {
+                        //TODO: log for invalid filter
+                    }
+                } else {
+                    String selectorName = locator.substring(0, indexOfColon);
+                    String selectorValue = locator.substring(indexOfColon + 1);
+                    Map<Selector, String> selector = new HashMap<>();
+                    try {
+                        selector.put(Selector.valueOf(selectorName), selectorValue);
+                        selectors.add(selector);
+                    } catch (Exception e) {
+                        //TODO: log for invalid selector
+                    }
+                }
+            } else {
+                // at this point we assume we are looking for a testplan
+                if(locator.endsWith("yml") || locator.endsWith("yaml")) {
+                    for(TestplanInfo tp : availableTestplans) {
+                        if(tp.getPath().endsWith(locator)) {
+                            testplan = tp.getTestplan();
+                            break;
+                        }
+                    }
+                } else if(locator.contains("/")) {
+                    for(TestplanInfo tp : availableTestplans) {
+                        if(tp.getPath().startsWith(locator)) {
+                            testplan = tp.getTestplan();
+                            break;
+                        }
+                    }
+                } else {
+                    // assume they are filtering based on name
+                    for(TestplanInfo tp : availableTestplans) {
+                        if(tp.getName().contains(locator)) {
+                            testplan = tp.getTestplan();
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+        for(Map<Selector, String> selector : selectors) {
+            testplan.getSelectors().add(selector);
+        }
+        for(Map<Filter, String> filter : filters) {
+            testplan.getFilters().add(filter);
+        }
+
+        return testplan.getTests();
+    }
 
     public static TestcaseInfo fromContext(ExtensionContext context) {
             TestcaseInfo info = new TestcaseInfo();

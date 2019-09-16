@@ -1,5 +1,6 @@
-package com.slickqa.junit.testrunner.testinfo;
+package com.slickqa.junit.testrunner.output;
 
+import com.slickqa.junit.testrunner.Configuration;
 import de.vandermeer.asciitable.AsciiTable;
 
 public interface EndUserData {

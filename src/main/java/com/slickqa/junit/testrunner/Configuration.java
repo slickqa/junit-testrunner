@@ -1,4 +1,4 @@
-package com.slickqa.junit.testrunner.testinfo;
+package com.slickqa.junit.testrunner;
 
 public class Configuration {
     private String key;

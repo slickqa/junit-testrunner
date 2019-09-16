@@ -2,8 +2,8 @@ package com.slickqa.junit.testrunner.testplan;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.slickqa.junit.testrunner.testinfo.Configuration;
-import com.slickqa.junit.testrunner.testinfo.TestInformationCollectingExtension;
+import com.slickqa.junit.testrunner.Configuration;
+import com.slickqa.junit.testrunner.run.TestInformationCollectingExtension;
 import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.launcher.Launcher;

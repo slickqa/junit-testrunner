@@ -1,9 +1,9 @@
-package com.slickqa.junit.testrunner.listCommand;
+package com.slickqa.junit.testrunner.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.slickqa.junit.testrunner.testinfo.Configuration;
-import com.slickqa.junit.testrunner.testinfo.OutputFormat;
+import com.slickqa.junit.testrunner.Configuration;
+import com.slickqa.junit.testrunner.output.OutputFormat;
 import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
 import picocli.CommandLine.*;
@@ -25,34 +25,13 @@ public class ListTestcases implements Callable<Integer> {
     boolean withId;
 
 
-    @Parameters(index = "0", description = "Path to testplan")
-    String testplanLocation;
+    @Parameters(description = "Places to find testcases.  You can specify a testplan location, name, or any one of the testcase selectors or filters.")
+    String[] locators;
 
 
     @Override
     public Integer call() throws Exception {
-
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        InputStream tpStream = null;
-        try {
-            tpStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(testplanLocation);
-        } catch (Exception e) {
-            // do nothing
-        }
-        if(tpStream == null) {
-            System.err.println("Cannot find [" + testplanLocation + "]!");
-            return 1;
-        }
-
-        TestplanFile tp = null;
-        try {
-             tp = mapper.readValue(tpStream, TestplanFile.class);
-        } catch (Exception e) {
-            System.err.println(testplanLocation + " does not seem to be a valid testplan!");
-            return 1;
-        }
-
-        List<TestcaseInfo> tests = tp.getTests();
+        List<TestcaseInfo> tests = TestcaseInfo.findTestcases(locators);
         Configuration[] options = new Configuration[0];
         if(withId) {
             options = new Configuration[] {Configuration.Value(TestcaseInfo.WITH_ID, "true")};

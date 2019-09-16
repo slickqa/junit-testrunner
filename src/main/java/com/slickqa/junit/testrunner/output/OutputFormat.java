@@ -1,11 +1,11 @@
-package com.slickqa.junit.testrunner.testinfo;
+package com.slickqa.junit.testrunner.output;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.slickqa.junit.testrunner.Configuration;
 import de.vandermeer.asciitable.AsciiTable;
-import de.vandermeer.asciitable.CWC_LongestLine;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;

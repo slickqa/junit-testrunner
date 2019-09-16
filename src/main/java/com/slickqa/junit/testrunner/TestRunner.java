@@ -3,23 +3,10 @@
  */
 package com.slickqa.junit.testrunner;
 
-import com.slickqa.junit.testrunner.listCommand.ListCommand;
-import com.slickqa.junit.testrunner.testplan.TestplanFile;
-import org.junit.platform.launcher.Launcher;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
-import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.platform.launcher.listeners.LoggingListener;
-import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
-import org.junit.platform.launcher.listeners.TestExecutionSummary;
-import picocli.CommandLine.Option;
+import com.slickqa.junit.testrunner.commands.ListCommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine;
-
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 @Command(mixinStandardHelpOptions = true, versionProvider = TestRunnerVersionProvider.class,
          subcommands = {
