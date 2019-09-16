@@ -1,5 +1,11 @@
 #!/bin/bash
 
+export SCRIPT_NAME=$0
 export COLUMNS=`tput cols`
+
+if [ ! -f build/libs/junit-testrunner-test-1.0.0-SNAPSHOT.jar ];
+then
+	./gradlew testJar
+fi
 
 java -jar build/libs/junit-testrunner-test-1.0.0-SNAPSHOT.jar "$@"

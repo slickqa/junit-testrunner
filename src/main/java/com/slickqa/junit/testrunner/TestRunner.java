@@ -3,6 +3,7 @@
  */
 package com.slickqa.junit.testrunner;
 
+import com.slickqa.junit.testrunner.commands.DumpTestplans;
 import com.slickqa.junit.testrunner.commands.ListTestcases;
 import com.slickqa.junit.testrunner.commands.ListTestplans;
 import com.slickqa.junit.testrunner.commands.TestplanFilesHelp;
@@ -21,7 +22,8 @@ import java.util.logging.Logger;
             HelpCommand.class,
             ListTestcases.class,
             ListTestplans.class,
-            TestplanFilesHelp.class
+            TestplanFilesHelp.class,
+            DumpTestplans.class
          })
 public class TestRunner {
 
@@ -77,6 +79,11 @@ public class TestRunner {
 
     public static void main(String[] args) {
         CommandLine cmd = new CommandLine(new TestRunner());
+        String commandName = System.getenv("SCRIPT_NAME");
+        if(commandName == null) {
+            commandName = TestRunner.class.getName();
+        }
+        cmd.setCommandName(commandName);
         cmd.setUsageHelpWidth(TerminalWidthProvider.width());
         cmd.execute(args);
         /*
