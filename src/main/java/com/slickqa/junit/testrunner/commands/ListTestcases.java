@@ -12,7 +12,18 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name="testcases", aliases = {"tc"}, description = "List testcases")
+@Command(
+        name="testcases",
+        aliases = {"tc"},
+        description = "List testcases",
+        footerHeading = "%n@|bold,underline Examples|@%n",
+        footer = {
+                "%nList the testcases in a package:%n",
+                "  <command> tc packageName:com.slickqa.junit.testrunner",
+                "%nList the testcases in a testplan file in the classpath with the name @|underline FeatureOne.yml|@%n",
+                "  <command> tc FeatureOne.yml"
+        }
+)
 public class ListTestcases implements Callable<Integer> {
     // needed for automatic help
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
