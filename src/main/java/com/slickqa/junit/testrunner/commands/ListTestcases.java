@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name="testcases", aliases = {"tc"})
+@Command(name="testcases", aliases = {"tc"}, description = "List testcases")
 public class ListTestcases implements Callable<Integer> {
     // needed for automatic help
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")

@@ -3,4 +3,4 @@ description: All the tests for feature two without the data driven ones
 selectors:
   - packageName: com.slickqa.junit.testrunner.example.secondFeature
 filters:
-  - excludeClassNames: com.slickqa.junit.testrunner.example.secondFeature.SecondFeatureDataDrivenTests
+  - excludeClassNames: .*SecondFeatureDataDrivenTests$

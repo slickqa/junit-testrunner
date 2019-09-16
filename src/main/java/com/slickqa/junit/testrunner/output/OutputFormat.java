@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.slickqa.junit.testrunner.Configuration;
+import com.slickqa.junit.testrunner.TerminalWidthProvider;
 import de.vandermeer.asciitable.AsciiTable;
 import org.jline.terminal.TerminalBuilder;
 
@@ -36,12 +37,7 @@ public enum OutputFormat {
                 item.addToTable(table, options);
                 table.addRule();
             }
-            int width = 0;
-            try {
-                width = TerminalBuilder.terminal().getWidth();
-            } catch (IOException e) {
-                width = 80;
-            }
+            int width = TerminalWidthProvider.width();
             String widthOption = Configuration.GetOptionIfSet(options, COLUMN_WIDTH_OPTION);
             if(widthOption != null) {
                 width = Integer.parseInt(widthOption);

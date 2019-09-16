@@ -3,17 +3,40 @@
  */
 package com.slickqa.junit.testrunner;
 
-import com.slickqa.junit.testrunner.commands.ListCommand;
+import com.slickqa.junit.testrunner.commands.ListTestcases;
+import com.slickqa.junit.testrunner.commands.ListTestplans;
+import com.slickqa.junit.testrunner.commands.TestplanFilesHelp;
+import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @Command(mixinStandardHelpOptions = true, versionProvider = TestRunnerVersionProvider.class,
          subcommands = {
             HelpCommand.class,
-            ListCommand.class,
+            ListTestcases.class,
+            ListTestplans.class,
+            TestplanFilesHelp.class
          })
 public class TestRunner {
+
+    static {
+        if(System.getProperty("java.util.logging.config.file") == null) {
+            URL configResource = TestRunner.class.getClassLoader()
+                    .getResource("logging.properties");
+            if(configResource == null) {
+                configResource = TestRunner.class.getClassLoader()
+                        .getResource("com/slickqa/junit/testrunner/default-logging.properties");
+            }
+
+            System.setProperty("java.util.logging.config.file", configResource.getFile());
+        }
+    }
 
     /*
     commands:
@@ -53,7 +76,9 @@ public class TestRunner {
      */
 
     public static void main(String[] args) {
-        new CommandLine(new TestRunner()).execute(args);
+        CommandLine cmd = new CommandLine(new TestRunner());
+        cmd.setUsageHelpWidth(TerminalWidthProvider.width());
+        cmd.execute(args);
         /*
         try {
             TestplanFile testplan = TestplanFile.readFrom(new File(args[0]));

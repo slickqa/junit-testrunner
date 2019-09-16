@@ -8,7 +8,9 @@ import picocli.CommandLine;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name="testplans", aliases = "tp")
+@CommandLine.Command(
+        name="testplans", aliases = "tp", description = "List testplans"
+)
 public class ListTestplans implements Callable<Integer> {
 
     // needed for automatic help
