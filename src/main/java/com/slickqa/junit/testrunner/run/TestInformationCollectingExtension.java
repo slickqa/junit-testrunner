@@ -1,6 +1,6 @@
 package com.slickqa.junit.testrunner.run;
 
-import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
+import com.slickqa.junit.testrunner.output.TestcaseInfo;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 

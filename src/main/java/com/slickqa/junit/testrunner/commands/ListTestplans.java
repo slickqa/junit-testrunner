@@ -2,7 +2,7 @@ package com.slickqa.junit.testrunner.commands;
 
 import com.slickqa.junit.testrunner.Configuration;
 import com.slickqa.junit.testrunner.output.OutputFormat;
-import com.slickqa.junit.testrunner.testplan.TestplanInfo;
+import com.slickqa.junit.testrunner.output.TestplanInfo;
 import picocli.CommandLine;
 
 import java.util.List;

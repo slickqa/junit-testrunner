@@ -1,15 +1,14 @@
 package com.slickqa.junit.testrunner.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
-import com.slickqa.junit.testrunner.testplan.TestplanInfo;
+import com.slickqa.junit.testrunner.output.TestcaseInfo;
+import com.slickqa.junit.testrunner.output.TestplanInfo;
 import picocli.CommandLine;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

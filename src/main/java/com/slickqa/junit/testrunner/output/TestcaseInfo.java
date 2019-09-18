@@ -1,11 +1,9 @@
-package com.slickqa.junit.testrunner.testinfo;
+package com.slickqa.junit.testrunner.output;
 
 import com.slickqa.junit.testrunner.Configuration;
-import com.slickqa.junit.testrunner.output.EndUserData;
 import com.slickqa.junit.testrunner.testplan.Filter;
 import com.slickqa.junit.testrunner.testplan.Selector;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
-import com.slickqa.junit.testrunner.testplan.TestplanInfo;
 import de.vandermeer.asciitable.AsciiTable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
@@ -21,7 +19,7 @@ public class TestcaseInfo implements EndUserData {
     private String name;
     private Method method;
 
-    public static List<TestcaseInfo> findTestcases(String[] locators) {
+    public static TestplanFile locatorsToTesplan(String[] locators) {
         List<Map<Selector, String>> selectors = new ArrayList<>();
         List<Map<Filter, String>> filters = new ArrayList<>();
         List<TestplanInfo> availableTestplans = TestplanInfo.findAvailableTestplans(false);
@@ -86,7 +84,11 @@ public class TestcaseInfo implements EndUserData {
             testplan.getFilters().add(filter);
         }
 
-        return testplan.getTests();
+        return testplan;
+    }
+
+    public static List<TestcaseInfo> findTestcases(String[] locators) {
+        return locatorsToTesplan(locators).getTests();
     }
 
     public static TestcaseInfo fromContext(ExtensionContext context) {
@@ -130,11 +132,12 @@ public class TestcaseInfo implements EndUserData {
     }
 
     @Override
-    public void addColumnHeadersToTable(AsciiTable table, Configuration... options) {
+    public boolean addColumnHeadersToTable(AsciiTable table, Configuration... options) {
         if(Configuration.OptionIsSet(options, WITH_ID, "true")) {
             table.addRow("Name", "Method", "Id");
         } else {
             table.addRow("Name", "Method");
         }
+        return true;
     }
 }

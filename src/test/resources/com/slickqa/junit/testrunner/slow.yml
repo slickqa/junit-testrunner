@@ -1,0 +1,4 @@
+name: Slow Running Example Tests
+description: A set of tests that run slower so that I can test the output of the run command.
+selectors:
+  - className: com.slickqa.junit.testrunner.example.SlowRunningTests

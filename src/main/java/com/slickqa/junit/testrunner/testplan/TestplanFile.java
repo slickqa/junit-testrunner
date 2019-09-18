@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.slickqa.junit.testrunner.Configuration;
 import com.slickqa.junit.testrunner.run.TestInformationCollectingExtension;
-import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
+import com.slickqa.junit.testrunner.output.TestcaseInfo;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;

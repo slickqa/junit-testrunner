@@ -6,6 +6,8 @@ import de.vandermeer.asciitable.AT_Context;
 import de.vandermeer.asciitable.AT_Row;
 import de.vandermeer.skb.interfaces.document.TableRowType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class SmartColumnWidthCalculator implements AT_ColumnWidthCalculator {
         int totalExpansionPotential = 0;
 
         // borders?
-        tableWidth -= colNumbers;
+        tableWidth -= (colNumbers + 2);
 
         // 1. calculate min and max and expansion potential of the column:
         //    - min is the width of the shortest line
@@ -48,6 +50,9 @@ public class SmartColumnWidthCalculator implements AT_ColumnWidthCalculator {
                             int length = cell.getContent().toString().length();
                             if (isHeaderRow) {
                                 // header row
+                                if( length < 3 ) {
+                                    length = 3;
+                                }
                                 min[j] = length;
                                 max[j] = length;
                                 columnWidths[j] = length;
@@ -82,7 +87,6 @@ public class SmartColumnWidthCalculator implements AT_ColumnWidthCalculator {
             columnWidths[i] += (int) Math.floor(expansionPotentialPercentage * availableWidth);
 
         }
-        // process:
         return columnWidths;
     }
 }

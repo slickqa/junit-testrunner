@@ -1,14 +1,10 @@
 package com.slickqa.junit.testrunner.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.slickqa.junit.testrunner.Configuration;
 import com.slickqa.junit.testrunner.output.OutputFormat;
-import com.slickqa.junit.testrunner.testinfo.TestcaseInfo;
-import com.slickqa.junit.testrunner.testplan.TestplanFile;
+import com.slickqa.junit.testrunner.output.TestcaseInfo;
 import picocli.CommandLine.*;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -36,7 +32,7 @@ public class ListTestcases implements Callable<Integer> {
     boolean withId;
 
 
-    @Parameters(description = "Places to find testcases.  You can specify a testplan location, name, or any one of the testcase selectors or filters.")
+    @Parameters(description = "Places to find testcases.  You can specify a testplan location, name, or any one of the testcase selectors or filters.", arity="1..*")
     String[] locators;
 
 

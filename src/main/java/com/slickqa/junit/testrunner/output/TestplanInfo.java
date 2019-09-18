@@ -1,10 +1,10 @@
-package com.slickqa.junit.testrunner.testplan;
+package com.slickqa.junit.testrunner.output;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.slickqa.junit.testrunner.Configuration;
-import com.slickqa.junit.testrunner.output.EndUserData;
+import com.slickqa.junit.testrunner.testplan.TestplanFile;
 import de.vandermeer.asciitable.AsciiTable;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.Resource;
@@ -101,11 +101,12 @@ public class TestplanInfo implements EndUserData {
     }
 
     @Override
-    public void addColumnHeadersToTable(AsciiTable table, Configuration... options) {
+    public boolean addColumnHeadersToTable(AsciiTable table, Configuration... options) {
         if(Configuration.OptionIsSet(options, INCLUDE_COUNT_OPTION, "true")) {
             table.addRow("Name", "Test Count", "Location", "Testplan Description");
         } else {
             table.addRow("Name", "Location", "Testplan Description");
         }
+        return true;
     }
 }

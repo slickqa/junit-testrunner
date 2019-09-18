@@ -3,19 +3,12 @@
  */
 package com.slickqa.junit.testrunner;
 
-import com.slickqa.junit.testrunner.commands.DumpTestplans;
-import com.slickqa.junit.testrunner.commands.ListTestcases;
-import com.slickqa.junit.testrunner.commands.ListTestplans;
-import com.slickqa.junit.testrunner.commands.TestplanFilesHelp;
-import org.jline.terminal.TerminalBuilder;
+import com.slickqa.junit.testrunner.commands.*;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Command(mixinStandardHelpOptions = true, versionProvider = TestRunnerVersionProvider.class,
          subcommands = {
@@ -23,16 +16,17 @@ import java.util.logging.Logger;
             ListTestcases.class,
             ListTestplans.class,
             TestplanFilesHelp.class,
-            DumpTestplans.class
+            DumpTestplans.class,
+            RunTests.class
          })
-public class TestRunner {
+public class TestRunnerMain {
 
     static {
         if(System.getProperty("java.util.logging.config.file") == null) {
-            URL configResource = TestRunner.class.getClassLoader()
+            URL configResource = TestRunnerMain.class.getClassLoader()
                     .getResource("logging.properties");
             if(configResource == null) {
-                configResource = TestRunner.class.getClassLoader()
+                configResource = TestRunnerMain.class.getClassLoader()
                         .getResource("com/slickqa/junit/testrunner/default-logging.properties");
             }
 
@@ -78,10 +72,10 @@ public class TestRunner {
      */
 
     public static void main(String[] args) {
-        CommandLine cmd = new CommandLine(new TestRunner());
+        CommandLine cmd = new CommandLine(new TestRunnerMain());
         String commandName = System.getenv("SCRIPT_NAME");
         if(commandName == null) {
-            commandName = TestRunner.class.getName();
+            commandName = TestRunnerMain.class.getName();
         }
         cmd.setCommandName(commandName);
         cmd.setUsageHelpWidth(TerminalWidthProvider.width());

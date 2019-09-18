@@ -24,22 +24,52 @@ public enum OutputFormat {
         this.factory = factory;
     }
 
-    public String generateOutput(List<? extends EndUserData> data, Configuration... options) {
-        if(data == null || data.size() == 0) {
+    public String generateOutput(EndUserData data, Configuration... options) {
+        if (data == null) {
             return "";
         }
-        if(this == table) {
+        if (this == table) {
             AsciiTable table = new AsciiTable();
             table.addRule();
-            data.get(0).addColumnHeadersToTable(table, options);
+            if(data.addColumnHeadersToTable(table, options)) {
+                table.addRule();
+            }
+            data.addToTable(table, options);
+
+            int width = TerminalWidthProvider.width();
+            String widthOption = Configuration.GetOptionIfSet(options, COLUMN_WIDTH_OPTION);
+            if (widthOption != null) {
+                width = Integer.parseInt(widthOption);
+            }
+            table.getContext().setWidth(width);
+            table.getRenderer().setCWC(new SmartColumnWidthCalculator());
+            return table.render();
+        }
+        ObjectMapper mapper = new ObjectMapper(factory);
+        try {
+            return mapper.writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            return "";
+        }
+    }
+
+    public String generateOutput(List<? extends EndUserData> data, Configuration... options) {
+        if (data == null || data.size() == 0) {
+            return "";
+        }
+        if (this == table) {
+            AsciiTable table = new AsciiTable();
             table.addRule();
-            for(EndUserData item : data) {
+            if(data.get(0).addColumnHeadersToTable(table, options)) {
+                table.addRule();
+            }
+            for (EndUserData item : data) {
                 item.addToTable(table, options);
                 table.addRule();
             }
             int width = TerminalWidthProvider.width();
             String widthOption = Configuration.GetOptionIfSet(options, COLUMN_WIDTH_OPTION);
-            if(widthOption != null) {
+            if (widthOption != null) {
                 width = Integer.parseInt(widthOption);
             }
             table.getContext().setWidth(width);
