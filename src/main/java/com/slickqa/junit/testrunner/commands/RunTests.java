@@ -48,6 +48,9 @@ public class RunTests implements Callable<Integer> {
     @CommandLine.Option(names={"--junit-capture"}, description="Use junit's capture instead of the one provided by this runner.")
     boolean junitCapture = false;
 
+    @CommandLine.Option(names={"--no-junit-plugin-discovery"}, description="By default this runner turns on junit auto discovery of plugins via service loader.  Use this option to turn it off.")
+    boolean noJunitAutoDiscovery = false;
+
     @CommandLine.Option(names={"-o", "--summary-output"}, description="Output the summary to a file instead of stdout.")
     File summaryOutput;
 
@@ -76,6 +79,10 @@ public class RunTests implements Callable<Integer> {
                 return 1;
             }
             slickOptions.configureEnvironment();
+        }
+
+        if(!noJunitAutoDiscovery) {
+            configList.add(Configuration.Value("junit.jupiter.extensions.autodetection.enabled", "true"));
         }
 
         if(format == OutputFormat.table) {

@@ -7,6 +7,7 @@ import com.slickqa.jupiter.SlickConfigurationSource;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class SlickOptions {
     String slickTestplanName;
 
     @CommandLine.Option(names={"--slick-attribute"}, description = "Set name=value attributes on the slick result.")
-    Map<String, String> slickAttributes;
+    Map<String, String> slickAttributes = new HashMap<>();
 
     SlickOption[] getOptions() {
         if(options == null) {
