@@ -78,6 +78,10 @@ public class RunTests implements Callable<Integer> {
             slickOptions.configureEnvironment();
         }
 
+        if(format == OutputFormat.table) {
+            configList.add(Configuration.Value(OutputFormat.COLUMN_WIDTH_OPTION, "30"));
+        }
+
         if(noCapture) {
             configList.add(Configuration.Value(FormattedExecutionListener.NO_CAPTURE, "true"));
         } else if(junitCapture){
