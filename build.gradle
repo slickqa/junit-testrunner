@@ -36,7 +36,7 @@ dependencies {
     compile 'org.junit.platform:junit-platform-launcher:1.5.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.9.1'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
-    compile 'com.slickqa:slickqa-junit-jupiter:1.0.0-20'
+    compile 'com.slickqa:slickqa-junit-jupiter:1.0.0-24'
     compile 'info.picocli:picocli:4.0.3'
     compile 'io.github.classgraph:classgraph:4.8.47'
     compile 'de.vandermeer:asciitable:0.3.2'

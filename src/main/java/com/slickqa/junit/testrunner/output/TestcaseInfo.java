@@ -4,6 +4,7 @@ import com.slickqa.junit.testrunner.Configuration;
 import com.slickqa.junit.testrunner.testplan.Filter;
 import com.slickqa.junit.testrunner.testplan.Selector;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
+import com.slickqa.jupiter.annotations.TestCaseInfo;
 import de.vandermeer.asciitable.AsciiTable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
@@ -14,10 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 public class TestcaseInfo implements EndUserData {
-    public static final String WITH_ID="WITH_ID";
+    public static final String WITH_ID = "WITH_ID";
     private String id;
     private String name;
     private Method method;
+    private SlickTestInfo testInfo;
 
     public static TestplanFile locatorsToTesplan(String[] locators) {
         List<Map<Selector, String>> selectors = new ArrayList<>();
@@ -25,10 +27,10 @@ public class TestcaseInfo implements EndUserData {
         List<TestplanInfo> availableTestplans = TestplanInfo.findAvailableTestplans(false);
         TestplanFile testplan = new TestplanFile();
 
-        for(String locator : locators) {
-            if(locator.contains(":")) {
+        for (String locator : locators) {
+            if (locator.contains(":")) {
                 int indexOfColon = locator.indexOf(':');
-                if(locator.startsWith("exclude") || locator.startsWith("include")) {
+                if (locator.startsWith("exclude") || locator.startsWith("include")) {
                     String filterName = locator.substring(0, indexOfColon);
                     String filterValue = locator.substring(indexOfColon + 1);
                     Map<Filter, String> filter = new HashMap<>();
@@ -51,24 +53,24 @@ public class TestcaseInfo implements EndUserData {
                 }
             } else {
                 // at this point we assume we are looking for a testplan
-                if(locator.endsWith("yml") || locator.endsWith("yaml")) {
-                    for(TestplanInfo tp : availableTestplans) {
-                        if(tp.getPath().endsWith(locator)) {
+                if (locator.endsWith("yml") || locator.endsWith("yaml")) {
+                    for (TestplanInfo tp : availableTestplans) {
+                        if (tp.getPath().endsWith(locator)) {
                             testplan = tp.getTestplan();
                             break;
                         }
                     }
-                } else if(locator.contains("/")) {
-                    for(TestplanInfo tp : availableTestplans) {
-                        if(tp.getPath().startsWith(locator)) {
+                } else if (locator.contains("/")) {
+                    for (TestplanInfo tp : availableTestplans) {
+                        if (tp.getPath().startsWith(locator)) {
                             testplan = tp.getTestplan();
                             break;
                         }
                     }
                 } else {
                     // assume they are filtering based on name
-                    for(TestplanInfo tp : availableTestplans) {
-                        if(tp.getName().contains(locator)) {
+                    for (TestplanInfo tp : availableTestplans) {
+                        if (tp.getName().contains(locator)) {
                             testplan = tp.getTestplan();
                             break;
                         }
@@ -77,10 +79,10 @@ public class TestcaseInfo implements EndUserData {
             }
 
         }
-        for(Map<Selector, String> selector : selectors) {
+        for (Map<Selector, String> selector : selectors) {
             testplan.getSelectors().add(selector);
         }
-        for(Map<Filter, String> filter : filters) {
+        for (Map<Filter, String> filter : filters) {
             testplan.getFilters().add(filter);
         }
 
@@ -92,11 +94,18 @@ public class TestcaseInfo implements EndUserData {
     }
 
     public static TestcaseInfo fromContext(ExtensionContext context) {
-            TestcaseInfo info = new TestcaseInfo();
-            info.setId(context.getUniqueId());
-            info.setName(context.getDisplayName());
-            info.method = context.getRequiredTestMethod();
-            return info;
+        TestcaseInfo info = new TestcaseInfo();
+        info.setId(context.getUniqueId());
+        info.setName(context.getDisplayName());
+        info.method = context.getRequiredTestMethod();
+        TestCaseInfo slickInfo = info.method.getDeclaredAnnotation(TestCaseInfo.class);
+        if (slickInfo != null) {
+            if (!"".equals(slickInfo.title())) {
+                info.setName(slickInfo.title());
+            }
+            info.testInfo = SlickTestInfo.fromAnnotation(slickInfo);
+        }
+        return info;
     }
 
     public String getId() {
@@ -116,15 +125,23 @@ public class TestcaseInfo implements EndUserData {
     }
 
     public String getMethod() {
-        if(method != null) {
+        if (method != null) {
             return method.getDeclaringClass().getCanonicalName() + "#" + method.getName();
         }
         return null;
     }
 
+    public SlickTestInfo getTestInfo() {
+        return testInfo;
+    }
+
+    public void setTestInfo(SlickTestInfo testInfo) {
+        this.testInfo = testInfo;
+    }
+
     @Override
     public void addToTable(AsciiTable table, Configuration... options) {
-        if(Configuration.OptionIsSet(options, WITH_ID, "true")) {
+        if (Configuration.OptionIsSet(options, WITH_ID, "true")) {
             table.addRow(getName(), getMethod(), getId());
         } else {
             table.addRow(getName(), getMethod());
@@ -133,7 +150,7 @@ public class TestcaseInfo implements EndUserData {
 
     @Override
     public boolean addColumnHeadersToTable(AsciiTable table, Configuration... options) {
-        if(Configuration.OptionIsSet(options, WITH_ID, "true")) {
+        if (Configuration.OptionIsSet(options, WITH_ID, "true")) {
             table.addRow("Name", "Method", "Id");
         } else {
             table.addRow("Name", "Method");
