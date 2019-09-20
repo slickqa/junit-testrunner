@@ -19,7 +19,7 @@ sourceCompatibility = 1.8
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -78,4 +78,69 @@ task testJar(type: ShadowJar) {
         attributes 'Main-Class': 'com.slickqa.junit.testrunner.TestRunnerMain'
     }
 }
+
+
+task javadocJar(type: Jar) {
+    archiveClassifier.set("javadoc")
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = 'junit-testrunner'
+                description = 'A testrunner for junit that has the ability to configure slick automatically.'
+                url = 'https://github.com/slickqa/junit-testrunner'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'jasoncorbett'
+                        name = 'Jason Corbett'
+                        email = 'jasoncorbett@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/slickqa/junit-testrunner.git'
+                    developerConnection = 'scm:git:https://github.com/slickqa/junit-testrunner.git'
+                    url = 'https://github.com/slickqa/junit-testrunner'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    required { isReleaseVersion }
+    sign publishing.publications.mavenJava
+}
+
+nexusStaging {
+    packageGroup = 'com.slickqa'
+    username = ossrhUsername
+    password = ossrhPassword
+}
+
+nexusPublishing {
+    username = ossrhUsername // defaults to project.properties["nexusUsername"]
+    password = ossrhPassword // defaults to project.properties["nexusPassword"]
+}
+
 
