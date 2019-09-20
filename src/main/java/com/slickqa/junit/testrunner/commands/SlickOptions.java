@@ -33,7 +33,7 @@ public class SlickOptions {
     @CommandLine.Option(names={"--slick-testplan"})
     String slickTestplanName;
 
-    @CommandLine.Option(names={"--slick-attribute"}, description = "Set name=value attributes on the slick result.")
+    @CommandLine.Option(names={"-a", "--slick-attribute"}, description = "Set name=value attributes on the slick result.")
     Map<String, String> slickAttributes = new HashMap<>();
 
     SlickOption[] getOptions() {

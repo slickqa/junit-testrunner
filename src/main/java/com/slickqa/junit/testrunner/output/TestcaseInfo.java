@@ -7,6 +7,7 @@ import com.slickqa.junit.testrunner.testplan.TestplanFile;
 import com.slickqa.jupiter.annotations.TestCaseInfo;
 import de.vandermeer.asciitable.AsciiTable;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.launcher.TestIdentifier;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -105,6 +106,13 @@ public class TestcaseInfo implements EndUserData {
             }
             info.testInfo = SlickTestInfo.fromAnnotation(slickInfo);
         }
+        return info;
+    }
+
+    public static TestcaseInfo fromTestIdentifier(TestIdentifier id) {
+        TestcaseInfo info = new TestcaseInfo();
+        info.setId(id.getUniqueId());
+        info.setName(id.getDisplayName());
         return info;
     }
 

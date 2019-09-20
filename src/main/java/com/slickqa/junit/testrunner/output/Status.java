@@ -20,6 +20,8 @@ public class Status {
             return "red";
         } else if("BROKEN".equals(status)) {
             return "yellow";
+        } else if("SKIP".equals(status)) {
+            return "magenta";
         } else if("TOTAL".equals(status)) {
             return "bold";
         }

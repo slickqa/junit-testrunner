@@ -17,7 +17,8 @@ import java.net.URL;
             ListTestplans.class,
             TestplanFilesHelp.class,
             DumpTestplans.class,
-            RunTests.class
+            RunTests.class,
+            ScheduleTests.class
          })
 public class TestRunnerMain {
 

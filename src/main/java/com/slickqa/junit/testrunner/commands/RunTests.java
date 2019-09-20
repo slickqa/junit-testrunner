@@ -6,7 +6,6 @@ import com.slickqa.junit.testrunner.output.OutputFormat;
 import com.slickqa.junit.testrunner.output.TestcaseInfo;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
 import com.slickqa.jupiter.ConfigurationNames;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherFactory;
@@ -36,7 +35,7 @@ public class RunTests implements Callable<Integer> {
     @CommandLine.Option(names={"--slick-result-id"}, description="If trying to run a test in 'single test mode' updating one result, put the full url of the result here and skip all other slick options.")
     String slickResultUrl;
 
-    @CommandLine.Option(names={"--summary-only"}, description="Only print the summary data, not status updates")
+    @CommandLine.Option(names={"-q", "--quiet", "--summary-only"}, description="Only print the summary data, not live execution results")
     boolean summaryOnly = false;
 
     @CommandLine.Option(names={"--include-pass"}, description="This option shows details of tests that PASSED when a table output is used.  Normally if table output is selected (default) then details of testcases with PASS status are omitted.")
@@ -56,11 +55,6 @@ public class RunTests implements Callable<Integer> {
 
     @CommandLine.Parameters(description = "Places to find testcases to run.  You can specify a testplan location, name, or any one of the testcase selectors or filters.", arity = "1..*")
     String[] locators;
-
-
-    //summary-only (quiet)
-    //include pass output
-    //no-capture
 
     @Override
     public Integer call() throws Exception {

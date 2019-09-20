@@ -1,8 +1,14 @@
 package com.slickqa.junit.testrunner.output;
 
+import com.slickqa.client.SlickClient;
+import com.slickqa.client.errors.SlickError;
+import com.slickqa.client.model.Result;
+import com.slickqa.client.model.StoredFile;
 import com.slickqa.junit.testrunner.Configuration;
 import com.slickqa.junit.testrunner.TerminalWidthProvider;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
+import com.slickqa.jupiter.SlickJunitController;
+import com.slickqa.jupiter.SlickJunitControllerFactory;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -84,6 +90,29 @@ public class FormattedExecutionListener implements TestExecutionListener {
                     System.setOut(realOut);
                     System.setErr(realErr);
                     result.setStdout(new String(capture.toByteArray(), StandardCharsets.UTF_8));
+                    SlickJunitController slickController = SlickJunitControllerFactory.getControllerInstance();
+                    Result slickResult = slickController.getResultFor(testIdentifier.getUniqueId());
+                    if(slickResult != null) {
+                        if("SKIPPED".equals(slickResult.getStatus())) {
+                            result.setStatus("SKIP");
+                        }
+                        if(!"".equals(result.getStdout())) {
+                            try {
+                                SlickClient slick = slickController.getSlickClient();
+                                StoredFile upload = slick.files().createAndUpload("test-output.txt", "text/plain", new ByteArrayInputStream(result.getStdout().getBytes()));
+                                Result update = slick.result(slickResult.getId()).get();
+                                List<StoredFile> files = update.getFiles();
+                                if(files == null) {
+                                    files = new ArrayList<>(1);
+                                    update.setFiles(files);
+                                }
+                                files.add(upload);
+                                slick.result(update.getId()).update(update);
+                            } catch (SlickError slickError) {
+                                System.err.println("Unable to upload test output to slick: " + slickError);
+                            }
+                        }
+                    }
                     System.out.println(Status.getColorizedStatus(result.getStatus()));
                 } else {
                     System.out.println("----- " + result.getStatus() + ": " + result.getName());
