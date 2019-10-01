@@ -67,6 +67,10 @@ public class ScheduleTests implements Callable<Integer> {
         Configuration[] config = new Configuration[configList.size()];
         config = configList.toArray(config);
         TestplanFile testplan = TestcaseInfo.locatorsToTesplan(locators);
+        SlickOption testplanName = new SlickOption(ConfigurationNames.TESTPLAN_NAME, slickOptions.slickTestplanName, false, "--slick-testplan");
+        if(testplanName.getCmdLineValue() == null || "".equals(testplanName.getCmdLineValue())) {
+            System.setProperty(ConfigurationNames.TESTPLAN_NAME, testplan.getName());
+        }
         LauncherDiscoveryRequest request = testplan.toLauncherDiscoveryRequest(config);
         Launcher launcher = LauncherFactory.create();
         SchedulingTestExecutionListener listener = new SchedulingTestExecutionListener(format, testplan, config);
