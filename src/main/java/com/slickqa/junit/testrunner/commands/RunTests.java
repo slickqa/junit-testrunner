@@ -14,6 +14,7 @@ import picocli.CommandLine;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -116,6 +117,7 @@ public class RunTests implements Callable<Integer> {
 
         listener.printSummary(summaryOutput);
 
+        System.exit(listener.getResultCode());
         return listener.getResultCode();
     }
 }
