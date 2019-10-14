@@ -21,22 +21,26 @@ public class TestplanInfo implements EndUserData {
     String path;
     int testCount;
 
-    public static List<TestplanInfo> findAvailableTestplans(boolean count) {
+    public static List<TestplanInfo> findAvailableTestplans(String path, boolean count) {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         ResourceList potentialTestplansList = (new ClassGraph()).scan().getResourcesMatchingPattern(Pattern.compile("^.*\\.(yml|yaml)"));
         List<TestplanInfo> testplans = new ArrayList<>();
         for(Resource potentialTestplan : potentialTestplansList) {
             try {
+                if(path != null && !resourceInPath(potentialTestplan, path)) {
+                    continue;
+                }
                 TestplanFile tp = mapper.readValue(potentialTestplan.getURL(), TestplanFile.class);
                 if (tp != null) {
                     TestplanInfo info = new TestplanInfo();
                     info.setTestplan(tp);
                     info.setPath(potentialTestplan.getPathRelativeToClasspathElement());
-                    if(count) {
+                    if (count) {
                         info.setTestCount(tp.getTests().size());
                     }
                     testplans.add(info);
                 }
+
             } catch (Exception e) {
                 // do nothing
             } finally {
@@ -44,6 +48,23 @@ public class TestplanInfo implements EndUserData {
             }
         }
         return testplans;
+    }
+
+    public static boolean resourceInPath(Resource resource, String path) {
+        String dirname = "/";
+        int additional = 0;
+        if(path.endsWith("/")) {
+            additional = 1;
+        }
+        if(resource.getPathRelativeToClasspathElement().contains("/")) {
+            dirname = resource.getPathRelativeToClasspathElement();
+            dirname = dirname.substring(0, dirname.lastIndexOf('/') + additional);
+        }
+        return dirname.endsWith(path);
+    }
+
+    public static List<TestplanInfo> findAvailableTestplans(boolean count) {
+        return findAvailableTestplans(null, count);
     }
 
     public String getName() {

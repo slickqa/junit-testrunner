@@ -22,6 +22,17 @@ public class TestcaseInfo implements EndUserData {
     private Method method;
     private SlickTestInfo testInfo;
 
+
+
+    public static List<TestplanFile> findAllTestplansEndingWithPath(String path, boolean count) {
+        List<TestplanFile> matching = new ArrayList<>();
+        List<TestplanInfo> availableTestplans = TestplanInfo.findAvailableTestplans(path, count);
+        for(TestplanInfo testplan : availableTestplans) {
+            matching.add(testplan.getTestplan());
+        }
+        return matching;
+    }
+
     public static TestplanFile locatorsToTesplan(String[] locators) {
         List<Map<Selector, String>> selectors = new ArrayList<>();
         List<Map<Filter, String>> filters = new ArrayList<>();

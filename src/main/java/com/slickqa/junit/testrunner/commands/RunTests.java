@@ -23,6 +23,9 @@ import java.util.concurrent.Callable;
 )
 public class RunTests implements Callable<Integer> {
 
+    @CommandLine.Spec
+    CommandLine.Model.CommandSpec spec;
+
     // needed for automatic help
     @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
     boolean usageHelpRequested;
@@ -54,12 +57,66 @@ public class RunTests implements Callable<Integer> {
     @CommandLine.Option(names={"-o", "--summary-output"}, description="Output the summary to a file instead of stdout.")
     File summaryOutput;
 
-    @CommandLine.Parameters(description = "Places to find testcases to run.  You can specify a testplan location, name, or any one of the testcase selectors or filters.", arity = "1..*")
+    @CommandLine.Option(names = "--testplan-path", description = "Find any testplan that matches (directory ends with) this path and run it.")
+    String testplanPath;
+
+    @CommandLine.Parameters(description = "Places to find testcases to run.  You can specify a testplan location, name, or any one of the testcase selectors or filters.")
     String[] locators;
 
     @Override
     public Integer call() throws Exception {
-        List<Configuration> configList = new ArrayList<>();
+        handleSlickOptions();
+        Configuration[] config = setupConfiguration();
+        List<TestplanFile> testplans = loadPlans();
+
+        int resultCode = 0;
+        for(TestplanFile testplan : testplans) {
+
+            if (slickOptions.anyOptionsPresent()) {
+                SlickOption testplanName = new SlickOption(ConfigurationNames.TESTPLAN_NAME, slickOptions.slickTestplanName, false, "--slick-testplan");
+                if (testplanName.getCmdLineValue() == null || "".equals(testplanName.getCmdLineValue())) {
+                    System.setProperty(ConfigurationNames.TESTPLAN_NAME, testplan.getName());
+                }
+            }
+            LauncherDiscoveryRequest request = testplan.toLauncherDiscoveryRequest(config);
+            Launcher launcher = LauncherFactory.create();
+            FormattedExecutionListener listener = new FormattedExecutionListener(format, testplan, config);
+            launcher.registerTestExecutionListeners(listener);
+            launcher.execute(request);
+
+            listener.printSummary(summaryOutput);
+
+            if(listener.getResultCode() != 0) {
+                resultCode = listener.getResultCode();
+            }
+        }
+
+        System.exit(resultCode);
+        return resultCode;
+    }
+
+    public List<TestplanFile> loadPlans() {
+        if(locators != null && locators.length > 0 && testplanPath != null) {
+            System.err.println("You specified standard locators as well as a testplan path.  This is invalid.");
+            System.exit(1);
+        }
+        if(locators != null && locators.length == 0 && testplanPath == null) {
+            System.err.println("You must specify either a locator or a testplan path");
+            spec.commandLine().usage(System.err);
+            System.exit(1);
+        }
+
+        List<TestplanFile> testplans = new ArrayList<>();
+        if(testplanPath != null && !"".equals(testplanPath)) {
+            testplans.addAll(TestcaseInfo.findAllTestplansEndingWithPath(testplanPath, false));
+        } else {
+           testplans.add(TestcaseInfo.locatorsToTesplan(locators));
+        }
+
+        return testplans;
+    }
+
+    public void handleSlickOptions() {
         if (slickResultUrl != null) {
             System.setProperty(ConfigurationNames.RESULT_URL, slickResultUrl);
             // in case there were any options like attributes given
@@ -71,11 +128,14 @@ public class RunTests implements Callable<Integer> {
             if (missing != null && missing.size() > 0) {
                 System.err.println("You specified some slick options, but slick reporting won't work without also these options:");
                 System.err.println(String.join(", ", missing));
-                return 1;
+                System.exit(1);
             }
             slickOptions.configureEnvironment();
         }
+    }
 
+    public Configuration[] setupConfiguration() {
+        List<Configuration> configList = new ArrayList<>();
         if(!noJunitAutoDiscovery) {
             configList.add(Configuration.Value("junit.jupiter.extensions.autodetection.enabled", "true"));
         }
@@ -102,22 +162,6 @@ public class RunTests implements Callable<Integer> {
 
         Configuration[] config = new Configuration[configList.size()];
         config = configList.toArray(config);
-        TestplanFile testplan = TestcaseInfo.locatorsToTesplan(locators);
-        if(slickOptions.anyOptionsPresent()) {
-            SlickOption testplanName = new SlickOption(ConfigurationNames.TESTPLAN_NAME, slickOptions.slickTestplanName, false, "--slick-testplan");
-            if (testplanName.getCmdLineValue() == null || "".equals(testplanName.getCmdLineValue())) {
-                System.setProperty(ConfigurationNames.TESTPLAN_NAME, testplan.getName());
-            }
-        }
-        LauncherDiscoveryRequest request = testplan.toLauncherDiscoveryRequest(config);
-        Launcher launcher = LauncherFactory.create();
-        FormattedExecutionListener listener = new FormattedExecutionListener(format, testplan, config);
-        launcher.registerTestExecutionListeners(listener);
-        launcher.execute(request);
-
-        listener.printSummary(summaryOutput);
-
-        System.exit(listener.getResultCode());
-        return listener.getResultCode();
+        return config;
     }
 }
