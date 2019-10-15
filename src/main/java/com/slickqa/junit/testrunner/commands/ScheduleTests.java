@@ -6,6 +6,7 @@ import com.slickqa.junit.testrunner.output.SchedulingTestExecutionListener;
 import com.slickqa.junit.testrunner.output.TestcaseInfo;
 import com.slickqa.junit.testrunner.testplan.TestplanFile;
 import com.slickqa.jupiter.ConfigurationNames;
+import com.slickqa.jupiter.SlickJunitControllerFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -54,7 +55,7 @@ public class ScheduleTests implements Callable<Integer> {
         int resultCode = 0;
         for(TestplanFile testplan : testplans) {
             SlickOption testplanName = new SlickOption(ConfigurationNames.TESTPLAN_NAME, slickOptions.slickTestplanName, false, "--slick-testplan");
-            if (testplanName.getCmdLineValue() == null || "".equals(testplanName.getCmdLineValue())) {
+            if (testplanName.getCmdLineValue() == null || "".equals(testplanName.getCmdLineValue()) || testplanPath != null) {
                 System.setProperty(ConfigurationNames.TESTPLAN_NAME, testplan.getName());
             }
             LauncherDiscoveryRequest request = testplan.toLauncherDiscoveryRequest(config);
@@ -67,6 +68,7 @@ public class ScheduleTests implements Callable<Integer> {
             if(listener.getResultCode() != 0) {
                 resultCode = listener.getResultCode();
             }
+            SlickJunitControllerFactory.INSTANCE = null;
         }
 
         System.exit(resultCode);
