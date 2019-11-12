@@ -31,7 +31,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh './gradlew build publishToNexus closeAndReleaseRepository -x test'
+                sh './gradlew build publishToSonatype closeAndReleaseRepository -x test'
             }
         }
     }
