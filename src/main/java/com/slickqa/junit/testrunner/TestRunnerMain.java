@@ -80,7 +80,12 @@ public class TestRunnerMain {
         }
         cmd.setCommandName(commandName);
         cmd.setUsageHelpWidth(TerminalWidthProvider.width());
-        cmd.execute(args);
+        if(args.length > 0) {
+            cmd.execute(args);
+        } else {
+            cmd.usage(System.err);
+            System.exit(1);
+        }
         /*
         try {
             TestplanFile testplan = TestplanFile.readFrom(new File(args[0]));

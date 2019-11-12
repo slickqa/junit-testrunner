@@ -64,8 +64,14 @@ public class RunTests implements Callable<Integer> {
     @CommandLine.Parameters(description = "Places to find testcases to run.  You can specify a testplan location, name, or any one of the testcase selectors or filters.")
     String[] locators;
 
+    @CommandLine.Mixin
+    SystemPropertyOption systemPropertyOptions;
+
     @Override
     public Integer call() throws Exception {
+        if(systemPropertyOptions != null) {
+            systemPropertyOptions.setProperties();
+        }
         handleSlickOptions();
         Configuration[] config = setupConfiguration();
         List<TestplanFile> testplans = loadPlans();

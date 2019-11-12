@@ -31,13 +31,17 @@ public class ListTestcases implements Callable<Integer> {
     @Option(names = {"--id"}, description = "include the id in the table.  The other formats always include it.")
     boolean withId;
 
-
     @Parameters(description = "Places to find testcases.  You can specify a testplan location, name, or any one of the testcase selectors or filters.", arity="1..*")
     String[] locators;
 
+    @Mixin
+    SystemPropertyOption systemPropertyOptions;
 
     @Override
     public Integer call() throws Exception {
+        if(systemPropertyOptions != null) {
+            systemPropertyOptions.setProperties();
+        }
         List<TestcaseInfo> tests = TestcaseInfo.findTestcases(locators);
         Configuration[] options = new Configuration[0];
         if(withId) {

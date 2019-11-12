@@ -28,8 +28,14 @@ public class DumpTestplans implements Callable<Integer> {
     )
     String outputPath;
 
+    @CommandLine.Mixin
+    SystemPropertyOption systemPropertyOptions;
+
     @Override
     public Integer call() throws Exception {
+        if(systemPropertyOptions != null) {
+            systemPropertyOptions.setProperties();
+        }
         Path outputBaseDir = Paths.get(outputPath);
         if(!Files.exists(outputBaseDir)) {
             Files.createDirectories(outputBaseDir);

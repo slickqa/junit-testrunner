@@ -27,8 +27,15 @@ public class ListTestplans implements Callable<Integer> {
     @CommandLine.Option(names = "--testplan-path", description = "Find any testplan that matches (directory ends with) this path.")
     String testplanPath;
 
+    @CommandLine.Mixin
+    SystemPropertyOption systemPropertyOptions;
+
     @Override
     public Integer call() throws Exception {
+        if(systemPropertyOptions != null) {
+            systemPropertyOptions.setProperties();
+        }
+
         List<TestplanInfo> testplans;
         if(testplanPath != null && !"".equals(testplanPath)) {
             testplans = TestplanInfo.findAvailableTestplans(testplanPath, count);
