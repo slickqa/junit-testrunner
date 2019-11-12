@@ -3,8 +3,8 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'signing'
-    id 'io.codearte.nexus-staging' version '0.21.0'
-    id 'de.marcphilipp.nexus-publish' version '0.2.0'
+    id 'io.codearte.nexus-staging' version '0.21.1'
+    id 'de.marcphilipp.nexus-publish' version '0.4.0'
 
     id 'com.github.johnrengelman.shadow' version '5.1.0'
 }
@@ -139,8 +139,14 @@ nexusStaging {
 }
 
 nexusPublishing {
-    username = ossrhUsername // defaults to project.properties["nexusUsername"]
-    password = ossrhPassword // defaults to project.properties["nexusPassword"]
+    repositories {
+        sonatype {
+            username = ossrhUsername // defaults to project.properties["nexusUsername"]
+            password = ossrhPassword // defaults to project.properties["nexusPassword"]
+            connectTimeout = java.time.Duration.ofMinutes(5)
+            clientTimeout = java.time.Duration.ofMinutes(5)
+        }
+    }
 }
 
 
