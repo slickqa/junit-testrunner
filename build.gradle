@@ -136,6 +136,7 @@ nexusStaging {
     packageGroup = 'com.slickqa'
     username = ossrhUsername
     password = ossrhPassword
+    numberOfRetries = 80
 }
 
 nexusPublishing {
