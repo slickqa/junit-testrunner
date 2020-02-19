@@ -3,12 +3,15 @@ package com.slickqa.junit.testrunner.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.slickqa.junit.testrunner.output.TestcaseInfo;
 import com.slickqa.junit.testrunner.output.TestplanInfo;
+import org.junit.platform.commons.JUnitException;
 import picocli.CommandLine;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +50,12 @@ public class DumpTestplans implements Callable<Integer> {
         List<TestplanInfo> testplans = TestplanInfo.findAvailableTestplans(false); // don't do count, we'll do that later
 
         for(TestplanInfo tp : testplans) {
-            List<TestcaseInfo> tests = tp.getTestplan().getTests();
+            List<TestcaseInfo> tests = new ArrayList<>();
+            try {
+                tests = tp.getTestplan().getTests();
+            } catch(JUnitException e) {
+                System.err.println(MessageFormat.format("Error dumping testplan {0}: {1}", tp.getName(), e.getMessage()));
+            }
             tp.setPath(tp.getPath().replace(".yaml", ".json"));
             tp.setPath(tp.getPath().replace(".yml", ".json"));
             testplanMap.put(tp, tests);
